@@ -2,29 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 namespace Maze
 {
     public class Main : MonoBehaviour
     {
-        private InputController _inputController;
-
-        private ListExecuteObjectController _executeObject;
+        IEnumerator interactiveEnum;
 
         [SerializeField] private Unit _player;
-
         [SerializeField] private Bonus[] BonusObj;
 
-        IEnumerator interactiveEnum;
+        private InputController _inputController;
+        private CameraController _cameraController;
+        private ListExecuteObjectController _executeObject;
 
         private void Awake()
         {
             _inputController = new InputController(_player);
-
             _executeObject = new ListExecuteObjectController(BonusObj);
+            _cameraController = new CameraController(_player.transform, Camera.main.transform);
 
             _executeObject.AddExecuteObject(_inputController);
-
+            _executeObject.AddExecuteObject(_cameraController);
             interactiveEnum = _executeObject.GetEnumerator();
         }
 
@@ -44,11 +44,14 @@ namespace Maze
             for (int i = 0; i < _executeObject.Length; i++)
             {
                 //if (_executeObject.InteractiveObject[i] == null)
-               //{
-               //     continue;
-               // }
+                //{
+                //     continue;
+                // }
                 //_executeObject.InteractiveObject[i].Update();
             }
+
+            if (Input.GetKey(KeyCode.R))
+               SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 }
